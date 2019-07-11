@@ -95,6 +95,22 @@ if(FALSE){#!@testing
     expect_equal(sum(pd_has_tag(id, pd, tag)), 2)
 }
 
+#@internal
+has_tag <- function(id=pd$id, tag='', pd=get("pd", parent.frame())){
+    pd_has_tag(id, pd, tag)
+}
+if(FALSE){#@testing
+    pd  <- parsetools::get_parse_data(parse(text={"
+        if(FALSE){#@block block content
+            #' @first first content
+            #' @second second content
+            #' not part of second content.
+            #' @last
+        }
+    "}, keep.source=TRUE))
+    expect_equal(sum(has_tag()), 4L)
+}
+
 #@ internal
 clean_tag_comments <-
 function( x
@@ -178,8 +194,90 @@ if(FALSE){#!@testing
     expect_equal(pd_get_tagged_comment_ids(pd, tag, FALSE), c(15L, 21L))
 }
 
+#' Get the content of a tag
+#'
+#' @inheritParams pd_has_tag
+#'
+#' @param all.contiguous if TRUE get all comments connected to this element.
+#' @export
+pd_get_comment_tag_content <- function(id, pd, tag, all.contiguous=FALSE){
+    stopifnot( all(is_doc_comment(id, pd))
+             , all(pd_has_tag(id, pd, tag))
+             )
+    if (all.contiguous){
+        ids <- id
+        repeat{
+            ns <- next_sibling(id)
+            if (token(id) != token(ns)) break
+            if (has_tag(ns)) break
+            if (start_line(ns) != end_line(id) + 1L) break
+            ids <- c(ids, ns)
+            id <- ns
+        }
+        trimws(strip_doc_comment_leads(strip_tag(text(ids), tag)))
+    } else {
+        trimws(strip_doc_comment_leads(strip_tag(text(id), tag)))
+    }
+}
+if(FALSE){#@testing
+    pd  <- parsetools::get_parse_data(parse(text={"
+        if(FALSE){#@block block content
+            #' @first first content
+            #' @second second content
+            #' not part of second content.
+            #' @last
+        }
+    "}, keep.source=TRUE))
+    expect_equal(sum(has_tag()), 4L)
 
 
+    block.id <- pd_get_tagged_comment_ids(pd, 'block')
+    expect_identical( pd_get_comment_tag_content(block.id, pd, 'block')
+                    , "block content")
+    expect_error( pd_get_comment_tag_content(block.id, pd, 'invalid'))
 
+    first.id <- pd_get_tagged_comment_ids(pd, 'first')
+    expect_identical( pd_get_comment_tag_content(first.id, pd, 'first')
+                    , "first content")
 
+    second.id <- pd_get_tagged_comment_ids(pd, 'second')
+    expect_identical( pd_get_comment_tag_content(second.id, pd, 'second')
+                    , "second content")
+    expect_identical( pd_get_comment_tag_content(second.id, pd, 'second', all.contiguous = TRUE)
+                    ,c( "second content", "not part of second content."))
 
+    last.id <- pd_get_tagged_comment_ids(pd, 'last')
+    expect_identical( pd_get_comment_tag_content(last.id, pd, 'last')
+                    , "")
+}
+
+if(FALSE){#@testing edge cases
+    pd  <- parsetools::get_parse_data(parse(text={"
+        f <- function(){
+        #' @testtag comment lines
+
+        #' That aren't contiguous.
+        #' because they are separated by a blank line.
+
+        #' @testtag2 These are contiguous
+        #'
+        #' Because the line separating them is
+        #' a documentation comment itself.
+        print('hello world')
+        #' and testtag2 ends due to an expression.
+        }
+    "}, keep.source=TRUE))
+    expect_equal(sum(has_tag()), 2L)
+
+    id <- pd_get_tagged_comment_ids(pd, 'testtag')
+    expect_identical( pd_get_comment_tag_content(id, pd, 'testtag', TRUE)
+                    , "comment lines")
+
+    id <- pd_get_tagged_comment_ids(pd, 'testtag2')
+    expect_identical( pd_get_comment_tag_content(id, pd, 'testtag2', TRUE)
+                    , c( "These are contiguous"
+                       , ""
+                       , "Because the line separating them is"
+                       , "a documentation comment itself."
+                       ))
+}
