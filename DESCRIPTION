@@ -1,7 +1,7 @@
 Package: parsetools
 Type: Package
 Title: Parse Tools
-Version: 0.1.1
+Version: 0.1.2
 Authors@R: c(
     person("Andrew", "Redd", , "andrew.redd@hsc.utah.edu", c("aut", "cre")),
     person("R Consortium", role=c("cph", "fnd"))
@@ -9,7 +9,7 @@ Authors@R: c(
 Maintainer: Andrew Redd <andrew.redd@hsc.utah.edu>
 License: GPL-2
 Language: en-US
-Imports: methods, tools, utils
+Imports: methods, utils
 Suggests: covr, knitr, rmarkdown, testthat
 Description: Tools and utilities for dealing with parse data. 
     Parse data represents the parse tree as data with location and type
@@ -23,14 +23,14 @@ Collate: 'internal.R' 'accessors.R' 'checks.R' 'children.R'
         'reconstitute.R' 'root.R' 'siblings.R' 'tags.R'
         'testing_blocks.R' 'zzz.R'
 Encoding: UTF-8
-RoxygenNote: 6.1.1
+RoxygenNote: 7.0.2
 VignetteBuilder: knitr
 KeepSource: yes
 URL: https://github.com/RDocTaskForce/parsetools
 BugReports: https://github.com/RDocTaskForce/parsetools/issues
 NeedsCompilation: no
-Packaged: 2019-07-11 17:28:35 UTC; u0092104
+Packaged: 2020-03-01 20:04:30 UTC; u0092104
 Author: Andrew Redd [aut, cre],
   R Consortium [cph, fnd]
 Repository: CRAN
-Date/Publication: 2019-07-11 21:58:01 UTC
+Date/Publication: 2020-03-01 20:30:03 UTC
