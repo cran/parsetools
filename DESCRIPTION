@@ -1,7 +1,7 @@
 Package: parsetools
 Type: Package
 Title: Parse Tools
-Version: 0.1.2
+Version: 0.1.3
 Authors@R: c(
     person("Andrew", "Redd", , "andrew.redd@hsc.utah.edu", c("aut", "cre")),
     person("R Consortium", role=c("cph", "fnd"))
@@ -29,8 +29,8 @@ KeepSource: yes
 URL: https://github.com/RDocTaskForce/parsetools
 BugReports: https://github.com/RDocTaskForce/parsetools/issues
 NeedsCompilation: no
-Packaged: 2020-03-01 20:04:30 UTC; u0092104
+Packaged: 2020-04-07 22:45:53 UTC; u0092104
 Author: Andrew Redd [aut, cre],
   R Consortium [cph, fnd]
 Repository: CRAN
-Date/Publication: 2020-03-01 20:30:03 UTC
+Date/Publication: 2020-04-08 16:30:02 UTC
